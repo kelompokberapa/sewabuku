@@ -2,15 +2,26 @@
 include 'koneksi.php';
 ?>
 
-<!DOCTYPE html>
-<html>
+    <!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>LibSmart</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibSmart | Perpustakaan Online</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f4f4f4;
         }
+
+        .navbar-brand img {
+        max-height: 250px; /* Ubah ukuran sesuai kebutuhan */
+        width: auto; /* Pertahankan rasio aspek gambar */
+    }
+    .navbar-nav .nav-link {
+        padding: 10px 15px; /* Ubah padding sesuai kebutuhan */
+    }
 
         footer {
             background: #50b3a2;
@@ -48,7 +59,9 @@ include 'koneksi.php';
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-info">
     <div class="container">
-        <a class="navbar-brand" id="branding" href="index.php">LibSmart</a>
+        <img src="img/perpus.png" width="80" height="100" class="d-inline-block align-top" alt="LibSmart Logo">
+            Perpustakaan Online
+        </img>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -78,17 +91,17 @@ include 'koneksi.php';
     <h2 class="text-center mb-4">Dashboard</h2>
     <?php
     // Total Buku
-    $total_buku_query = "SELECT COUNT(*) as total FROM buku";
+    $total_buku_query = "SELECT SUM(jumlah) as total FROM buku";
     $total_buku_result = $conn->query($total_buku_query);
     $total_buku = $total_buku_result->fetch_assoc()['total'];
 
     // Buku yang Dipinjam
-    $buku_dipinjam_query = "SELECT COUNT(*) as total FROM buku WHERE status_pinjam = 1";
+    $buku_dipinjam_query = "SELECT COUNT(*) as total FROM peminjaman WHERE tanggal_kembali IS NULL";
     $buku_dipinjam_result = $conn->query($buku_dipinjam_query);
     $buku_dipinjam = $buku_dipinjam_result->fetch_assoc()['total'];
 
     // Sisa Buku
-    $sisa_buku = $total_buku - $buku_dipinjam;
+    $sisa_buku = $total_buku ;
     ?>
     <div class="row">
         <div class="col-md-4">
@@ -122,7 +135,10 @@ include 'koneksi.php';
         <p>LibSmart &copy; 2024</p>
     </footer>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Boostrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

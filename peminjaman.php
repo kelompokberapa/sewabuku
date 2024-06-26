@@ -1,7 +1,7 @@
 <?php
 include 'koneksi.php';
 
-// Handle Peminjaman
+// Menangani Peminjaman
 if (isset($_POST['pinjam'])) {
     $id_anggota = $_POST['id_anggota'];
     $id_buku = $_POST['id_buku'];
@@ -15,25 +15,23 @@ if (isset($_POST['pinjam'])) {
     if ($jumlah_buku > 0) {
         $sql = "INSERT INTO peminjaman (id_anggota, id_buku, tanggal_pinjam) VALUES ('$id_anggota', '$id_buku', '$tanggal_pinjam')";
         $conn->query($sql);
-        $conn->query("UPDATE buku SET status_pinjam = 1 WHERE id = $id_buku");
         $conn->query("UPDATE buku SET jumlah = jumlah - 1 WHERE id = $id_buku"); // Kurangi jumlah buku yang tersedia
     } else {
         echo "Maaf, buku tidak tersedia untuk dipinjam.";
     }
 }
 
-// Handle Pengembalian
+// Menangani Pengembalian
 if (isset($_POST['kembali'])) {
     $id = $_POST['id'];
     $tanggal_kembali = date('Y-m-d');
     $sql = "UPDATE peminjaman SET tanggal_kembali = '$tanggal_kembali' WHERE id = $id";
     $conn->query($sql);
-    $conn->query("UPDATE buku SET status_pinjam = 0 WHERE id = (SELECT id_buku FROM peminjaman WHERE id = $id)");
     $conn->query("UPDATE buku SET jumlah = jumlah + 1 WHERE id = (SELECT id_buku FROM peminjaman WHERE id = $id)"); // Tambahkan jumlah buku yang tersedia setelah pengembalian
 }
 
 $anggota = $conn->query("SELECT * FROM anggota");
-$buku = $conn->query("SELECT * FROM buku WHERE status_pinjam = 0 AND jumlah > 0"); // Hanya tampilkan buku yang tersedia dan memiliki jumlah lebih dari 0
+$buku = $conn->query("SELECT * FROM buku WHERE jumlah > 0"); // Hanya tampilkan buku yang memiliki jumlah lebih dari 0
 
 $peminjaman = $conn->query("SELECT peminjaman.id, anggota.nama, buku.judul, peminjaman.tanggal_pinjam FROM peminjaman JOIN anggota ON peminjaman.id_anggota = anggota.id JOIN buku ON peminjaman.id_buku = buku.id WHERE peminjaman.tanggal_kembali IS NULL");
 ?>
@@ -41,7 +39,7 @@ $peminjaman = $conn->query("SELECT peminjaman.id, anggota.nama, buku.judul, pemi
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LibSmart - Transaksi Peminjamangu</title>
+    <title>LibSmart - Transaksi Peminjaman</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -184,3 +182,4 @@ $peminjaman = $conn->query("SELECT peminjaman.id, anggota.nama, buku.judul, pemi
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
