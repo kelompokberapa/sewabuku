@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "upi";
+$password = "";
 $dbname = "perpustakaan";
 
 // Create connection
