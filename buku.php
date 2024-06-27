@@ -6,8 +6,19 @@ if (isset($_POST['add'])) {
     $judul = $_POST['judul'];
     $pengarang = $_POST['pengarang'];
     $rak = $_POST['rak'];
-    $jumlah = $_POST['jumlah']; // Tambahkan input untuk jumlah buku
+    $jumlah = $_POST['jumlah'];
     $sql = "INSERT INTO buku (judul, pengarang, rak, jumlah) VALUES ('$judul', '$pengarang', '$rak', '$jumlah')";
+    $conn->query($sql);
+}
+
+// Handle Edit Buku
+if (isset($_POST['edit'])) {
+    $id = $_POST['id'];
+    $judul = $_POST['judul'];
+    $pengarang = $_POST['pengarang'];
+    $rak = $_POST['rak'];
+    $jumlah = $_POST['jumlah'];
+    $sql = "UPDATE buku SET judul='$judul', pengarang='$pengarang', rak='$rak', jumlah='$jumlah' WHERE id=$id";
     $conn->query($sql);
 }
 
@@ -23,6 +34,14 @@ if (isset($_GET['delete'])) {
     $conn->query($sql);
 }
 
+// Get Data Buku for Edit
+$buku_to_edit = null;
+if (isset($_GET['edit'])) {
+    $id = $_GET['edit'];
+    $result = $conn->query("SELECT * FROM buku WHERE id=$id");
+    $buku_to_edit = $result->fetch_assoc();
+}
+
 $buku = $conn->query("SELECT * FROM buku");
 ?>
 
@@ -34,7 +53,7 @@ $buku = $conn->query("SELECT * FROM buku");
     <style>
         body {
             background-color: #f4f4f4;
-            min-height: 100vh; /* Pastikan body memiliki tinggi minimal 100vh */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -76,7 +95,7 @@ $buku = $conn->query("SELECT * FROM buku");
             padding: 20px 0;
             position: relative;
             width: 100%;
-            margin-top: auto; /* Posisikan footer di bawah konten */
+            margin-top: auto;
         }
 
         .table thead th {
@@ -97,8 +116,8 @@ $buku = $conn->query("SELECT * FROM buku");
         }
 
         .container-main {
-            flex: 1; /* Biarkan kontainer utama mengambil ruang yang tersedia */
-            padding-bottom: 60px; /* Berikan padding-bottom agar footer tidak menutupi konten */
+            flex: 1;
+            padding-bottom: 60px;
         }
     </style>
 </head>
@@ -135,21 +154,22 @@ $buku = $conn->query("SELECT * FROM buku");
     <h3 class="text-center mb-4">Data Buku</h3>
     <div class="form-container mb-4">
         <form method="POST" action="buku.php">
+            <input type="hidden" name="id" value="<?php echo $buku_to_edit ? $buku_to_edit['id'] : ''; ?>">
             <div class="form-row">
                 <div class="form-group col-md-3">
-                    <input type="text" name="judul" class="form-control" placeholder="Judul Buku" required>
+                    <input type="text" name="judul" class="form-control" placeholder="Judul Buku" value="<?php echo $buku_to_edit ? $buku_to_edit['judul'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-3">
-                    <input type="text" name="pengarang" class="form-control" placeholder="Pengarang" required>
+                    <input type="text" name="pengarang" class="form-control" placeholder="Pengarang" value="<?php echo $buku_to_edit ? $buku_to_edit['pengarang'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-2">
-                    <input type="text" name="rak" class="form-control" placeholder="Rak" required>
+                    <input type="number" name="rak" class="form-control" placeholder="Rak" value="<?php echo $buku_to_edit ? $buku_to_edit['rak'] : ''; ?>" required min="1" max="10">
                 </div>
                 <div class="form-group col-md-2">
-                    <input type="number" name="jumlah" class="form-control" placeholder="Jumlah Buku" required> <!-- Input untuk jumlah buku -->
+                    <input type="number" name="jumlah" class="form-control" placeholder="Jumlah Buku" value="<?php echo $buku_to_edit ? $buku_to_edit['jumlah'] : ''; ?>" required min="1" max="20">
                 </div>
                 <div class="form-group col-md-2">
-                    <input type="submit" name="add" class="btn btn-primary btn-block" value="Tambah Buku">
+                    <input type="submit" name="<?php echo $buku_to_edit ? 'edit' : 'add'; ?>" class="btn btn-primary btn-block" value="<?php echo $buku_to_edit ? 'Edit Buku' : 'Tambah Buku'; ?>">
                 </div>
             </div>
         </form>
@@ -161,7 +181,7 @@ $buku = $conn->query("SELECT * FROM buku");
                     <th>Judul</th>
                     <th>Pengarang</th>
                     <th>Rak</th>
-                    <th>Jumlah Tersedia</th> <!-- Kolom baru untuk menampilkan jumlah buku yang tersedia -->
+                    <th>Jumlah Tersedia</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -172,9 +192,10 @@ $buku = $conn->query("SELECT * FROM buku");
                     <td><?php echo $row['judul']; ?></td>
                     <td><?php echo $row['pengarang']; ?></td>
                     <td><?php echo $row['rak']; ?></td>
-                    <td><?php echo $row['jumlah']; ?></td> <!-- Menampilkan jumlah buku yang tersedia -->
-                    <td><?php echo $row['status_pinjam'] ? 'Dipinjam' : 'Tersedia'; ?></td>
+                    <td><?php echo $row['jumlah']; ?></td>
+                    <td><?php echo $row['jumlah'] > 0 ? 'Tersedia' : 'Dipinjam'; ?></td>
                     <td>
+                        <a href="buku.php?edit=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
                         <a href="buku.php?delete=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm">Hapus</a>
                     </td>
                 </tr>
