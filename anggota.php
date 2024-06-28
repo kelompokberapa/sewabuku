@@ -132,7 +132,7 @@ $anggota = $conn->query("SELECT * FROM anggota");
                     <input type="text" name="nama" class="form-control" placeholder="Nama" required>
                 </div>
                 <div class="form-group col-md-5">
-                    <textarea name="alamat" class="form-control" placeholder="Alamat" required></textarea>
+                    <input name="alamat" class="form-control" placeholder="Alamat" required></>
                 </div>
                 <div class="form-group col-md-12">
                     <input type="submit" name="add" class="btn btn-primary btn-block" value="Tambah Anggota">
