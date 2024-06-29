@@ -126,7 +126,7 @@ $anggota = $conn->query("SELECT * FROM anggota");
         <form method="POST" action="anggota.php">
             <div class="form-row">
                 <div class="form-group col-md-3">
-                    <input type="text" name="nim" class="form-control" placeholder="NIM" required>
+                    <input type="number" name="nim" class="form-control" placeholder="NIM" required>
                 </div>
                 <div class="form-group col-md-4">
                     <input type="text" name="nama" class="form-control" placeholder="Nama" required>
